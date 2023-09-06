@@ -1,0 +1,38 @@
+syntax = "proto3"; 
+package golang_protobuf_user;
+option go_package="/golang_protobuf_user";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+
+message UserRepo {
+    message ProtoUser {
+        uint64 ID = 1;
+        string name = 2;
+        string email = 3;
+        string phone= 4;
+        message Address {
+            string street = 1;
+            string city = 2;
+            string state = 3;
+            string zip = 4;
+            bool isShippingAddress = 5; 
+        }
+        repeated Address addresses = 5;
+    }
+    repeated ProtoUser user = 1;
+}
+
+message UpdateRequest {
+    google.protobuf.Int64Value ID = 1;
+    UserRepo.ProtoUser user = 2;
+}
+
+service Crud {
+	rpc Create(UserRepo.ProtoUser) returns (UserRepo.ProtoUser);
+    rpc GetList(google.protobuf.Empty) returns (stream UserRepo.ProtoUser);
+    rpc GetOne(google.protobuf.Int64Value) returns (UserRepo.ProtoUser);
+	rpc Update(UpdateRequest) returns (UserRepo.ProtoUser);
+	rpc Delete(google.protobuf.Int64Value) returns (google.protobuf.BoolValue);
+}
